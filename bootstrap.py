@@ -1,5 +1,7 @@
 import numpy as np
 import read_counts
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 
