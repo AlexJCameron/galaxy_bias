@@ -2,13 +2,18 @@ import numpy as np
 import read_counts
 import bootstrap
 
+# USAGE: python bias.py /dir/dir/results_dir/ 0.01234
+#
+# argv inputs are directory of results (containing count_data.dat) and value for sigma(DM)^2
+
 if __name__=='__main__':
     # We'll take sigma(DarkMatter)**2 as 0.012333 - see Trenti & Stiavelli (2008)
-    sigDM2 = 0.012244 # Mean zb: 2.017586  zb int: 0.51441
+    # sigDM2 = 0.012244 # Mean zb: 2.017586  zb int: 0.51441
     # sigDM2 = 0.014124 # Mean zb: 1.865264  zb int: 0.461496
 
     from sys import argv
-    script, results_dir = argv
+    script, results_dir, sig_str = argv
+    sigDM2 = float(sig_str)
     count_file = results_dir + 'count_data.dat'
     bias_filename = results_dir + 'bias.txt'
     count_types = ['WhtCount', 'SegCount']
