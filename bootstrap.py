@@ -31,7 +31,7 @@ def get_meanvar(dataset):
     var = np.var(dataset)
     return mean, var
 
-def compute_bias(mean_N, var_N, sigDM2=0.012333):
+def compute_bias(mean_N, var_N, sigDM2=0.012244):
     """Computes the galaxy bias from mean and variance of galaxy counts and sigma(DarkMatter)^2
     (see Roberston 2010)
     """
@@ -61,15 +61,14 @@ def MC_bootstrap(counts_filename, no_repetitions, count_type='WhtCount'):
     for rep in range(no_repetitions):
         new_counts = pick_new_sample(count_list)
         mean_N, var_N = get_meanvar(new_counts)
-
-        ##########################################
-        ####### THis is probs dodgy!! ############
         if var_N >= mean_N:
             new_bias = compute_bias(mean_N, var_N)
-            bias_set.append(new_bias)
+        else:
+            new_bias = 0
+        bias_set.append(new_bias)
     return bias_set
 
-def plot_bias_hist(bias_set):
+def plot_bias_hist(bias_set, show=True):
     """Plots a histogram of the biases obtained
 
     Parameters
@@ -82,22 +81,16 @@ def plot_bias_hist(bias_set):
     plt.hist(bias_set, bins=Nbins)
     plt.xlabel('bias')
     plt.ylabel('counts')
-    plt.show()
-
-def plot_pdf(mean,std):
-    x = np.linspace(0,5,100)
-    plt.fill_between(x, mlab.normpdf(x, mean, std))
-    plt.ylim((0,0.7))
-    plt.xlim((0,4.5))
-    plt.xlabel('bias')
-    plt.ylabel('P(bias)')
-    plt.show()
-
+    plt.savefig(results_dir + 'bias_error.png')
+    if show:
+        plt.show()
+    else:
+        plt.cla()
 
 if __name__=='__main__':
-    count_file = '/home/alexc/Documents/l_proj/photoz/borgz8_results/nodust_count_data.dat'
-
+    from sys import argv
+    script, results_dir = argv
+    count_file = results_dir + 'count_data.dat'
     bias_set = MC_bootstrap(count_file, 1000)
     print "Mean:  %f    StDev:  %f" % (np.mean(bias_set), np.std(bias_set))
     plot_bias_hist(bias_set)
-    plot_pdf(np.mean(bias_set), np.std(bias_set))
