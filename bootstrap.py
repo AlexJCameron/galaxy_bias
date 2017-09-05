@@ -37,7 +37,7 @@ def compute_bias(mean_N, var_N, sigDM2=0.012244):
     """
     return ((var_N - mean_N)/(mean_N**2*sigDM2))**0.5
 
-def MC_bootstrap(counts_filename, no_repetitions, count_type='WhtCount'):
+def MC_bootstrap(counts_filename, no_repetitions, sigDM2=0.012244, count_type='WhtCount'):
     """Conducts a Monte-Carlo Bootstrapping error analysis on a set of counts.
 
     Will randomly select from the set of counts a number of times, calculate the bias for that set.plot
@@ -55,20 +55,20 @@ def MC_bootstrap(counts_filename, no_repetitions, count_type='WhtCount'):
         List of biases calculated in the analysis
 
     """
-    count_data = read_counts.get_counts_data(count_file)
+    count_data = read_counts.get_counts_data(counts_filename)
     count_list = list(count_data[count_type])
     bias_set = []
     for rep in range(no_repetitions):
         new_counts = pick_new_sample(count_list)
         mean_N, var_N = get_meanvar(new_counts)
         if var_N >= mean_N:
-            new_bias = compute_bias(mean_N, var_N)
+            new_bias = compute_bias(mean_N, var_N, sigDM2=sigDM2)
         else:
             new_bias = 0
         bias_set.append(new_bias)
     return bias_set
 
-def plot_bias_hist(bias_set, show=True):
+def plot_bias_hist(bias_set, plot_filename, show=True):
     """Plots a histogram of the biases obtained
 
     Parameters
@@ -81,7 +81,7 @@ def plot_bias_hist(bias_set, show=True):
     plt.hist(bias_set, bins=Nbins)
     plt.xlabel('bias')
     plt.ylabel('counts')
-    plt.savefig(results_dir + 'bias_error.png')
+    plt.savefig(plot_filename)
     if show:
         plt.show()
     else:
@@ -93,4 +93,4 @@ if __name__=='__main__':
     count_file = results_dir + 'count_data.dat'
     bias_set = MC_bootstrap(count_file, 1000)
     print "Mean:  %f    StDev:  %f" % (np.mean(bias_set), np.std(bias_set))
-    plot_bias_hist(bias_set)
+    plot_bias_hist(bias_set, results_dir + 'bias_error.png')
