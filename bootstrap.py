@@ -68,7 +68,7 @@ def MC_bootstrap(counts_filename, no_repetitions, sigDM2=0.012244, count_type='W
         bias_set.append(new_bias)
     return bias_set
 
-def plot_bias_hist(bias_set, plot_filename, show=True):
+def plot_bias_hist(bias_set, plot_filename, show=True, plot_title='Set of galaxy biases calculated from MC bootstrapping method'):
     """Plots a histogram of the biases obtained
 
     Parameters
@@ -79,6 +79,7 @@ def plot_bias_hist(bias_set, plot_filename, show=True):
     """
     Nbins = 25
     plt.hist(bias_set, bins=Nbins)
+    plt.title(plot_title)
     plt.xlabel('bias')
     plt.ylabel('counts')
     plt.savefig(plot_filename)
@@ -93,4 +94,4 @@ if __name__=='__main__':
     count_file = results_dir + 'count_data.dat'
     bias_set = MC_bootstrap(count_file, 1000)
     print "Mean:  %f    StDev:  %f" % (np.mean(bias_set), np.std(bias_set))
-    plot_bias_hist(bias_set, results_dir + 'bias_error.png')
+    plot_bias_hist(bias_set, results_dir + 'bias_error.png', show=True)

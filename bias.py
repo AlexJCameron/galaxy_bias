@@ -17,6 +17,7 @@ if __name__=='__main__':
     count_file = results_dir + 'count_data.dat'
     bias_filename = results_dir + 'bias.txt'
     count_types = ['WhtCount', 'SegCount']
+    label_dict = {'WhtCount':'weight','SegCount':'segmentation'}
 
     count_data = read_counts.get_counts_data(count_file)
     bias_results = open(bias_filename, 'w')
@@ -41,4 +42,5 @@ if __name__=='__main__':
         bias_results.write(log3 + '\n\n\n')
 
         plot_filename = results_dir + 'bias_error_%s.png' % count_type
-        bootstrap.plot_bias_hist(bias_set, plot_filename)
+        this_plot_title = "Distribution of galaxy biases from Monte-Carlo bootstrapping method - counts scaled according to %s map area" % label_dict[count_type]
+        bootstrap.plot_bias_hist(bias_set, plot_filename, show=False, plot_title=this_plot_title)
