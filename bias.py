@@ -4,7 +4,6 @@ import bootstrap
 
 if __name__=='__main__':
     # We'll take sigma(DarkMatter)**2 as 0.012333 - see Trenti & Stiavelli (2008)
-    # sigDM2 = 0.012333 # Mean zb: 2.019475  zb int: 0.50958
     sigDM2 = 0.012244 # Mean zb: 2.017586  zb int: 0.51441
     # sigDM2 = 0.014124 # Mean zb: 1.865264  zb int: 0.461496
 
