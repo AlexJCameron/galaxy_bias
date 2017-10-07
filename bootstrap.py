@@ -70,6 +70,25 @@ def MC_bootstrap(counts_filename, no_repetitions, sigDM2=0.012244, count_type='W
         bias_set.append(new_bias)
     return bias_set
 
+def plot_hist_setbins(dataset, plot_filename, bin_range, binwidth, xlabel='x', ylabel='y', title='Plot title', legend=False, label='data', x_range=None, y_range=None, line_colour='blue', fill_colour='#fffdc9'):
+    bins = np.arange(bin_range[0], bin_range[1], binwidth)
+    plt.hist(dataset, bins=bins, histtype='stepfilled', color=fill_colour)
+    plt.hist(dataset, bins=bins, histtype='step', color=line_colour, label=label)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if not x_range == None:
+        plt.xlim(x_range)
+    if not y_range == None:
+        plt.xlim(y_range)
+    if legend:
+        plt.legend()
+
+    plt.savefig(plot_filename)
+    plt.cla()
+
+    return None
+
 def plot_bias_hist(bias_set, plot_filename, show=True, plot_title='Set of galaxy biases calculated from MC bootstrapping method'):
     """Plots a histogram of the biases obtained
 
