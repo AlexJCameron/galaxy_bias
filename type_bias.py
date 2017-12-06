@@ -12,8 +12,9 @@ if __name__=='__main__':
     # sigDM2 = 0.014124 # Mean zb: 1.865264  zb int: 0.461496
 
     from sys import argv
-    script, results_dir, sig_str = argv
-    sigDM2 = float(sig_str)
+    script, results_dir, sig_early_str, sig_late_str = argv
+    sigDM2_early = float(sig_early_str)
+    sigDM2_late = float(sig_late_str)
     count_file = results_dir + 'count_data.dat'
     bias_filename = results_dir + 'bias.txt'
 
@@ -22,15 +23,21 @@ if __name__=='__main__':
     'early':early_list,
     'late':late_list
     }
+    sig_dict = {
+    'early':sigDM2_early,
+    'late':sigDM2_late
+    }
     types = ['early', 'late']
     bias_results = open(bias_filename, 'w')
 
     for tb in types:
+        sigDM2 = sig_dict[tb]
         log1 = 'For %s type:' % tb
         print log1
         bias_results.write(log1 + '\n')
 
         mean_N, var_N = np.mean(data_dict[tb]), np.var(data_dict[tb])
+        print mean_N, var_N
         bias = bootstrap.compute_bias(mean_N, var_N, sigDM2=sigDM2)
 
         log2 = "Bias:  %f" % bias
@@ -45,8 +52,8 @@ if __name__=='__main__':
         print '\n\n'
         bias_results.write(log3 + '\n\n\n')
 
-        hist_filename = results_dir + 'bias_error_%s.eps' % tb
-        pdf_filename = results_dir + 'bias_error_pdf_%s.eps' % tb
+        # hist_filename = results_dir + 'bias_error_%s.eps' % tb
+        # pdf_filename = results_dir + 'bias_error_pdf_%s.eps' % tb
 
-        bootstrap.plot_hist_setbins(bias_set, hist_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='count', x_range=(0.,6.))
-        bootstrap.plot_pdf_hist(bias_set, pdf_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='$P(b)$', x_range=(0.,6.))
+        # bootstrap.plot_hist_setbins(bias_set, hist_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='count', x_range=(0.,6.))
+        # bootstrap.plot_pdf_hist(bias_set, pdf_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='$P(b)$', x_range=(0.,6.))

@@ -52,7 +52,7 @@ def read_multi_type(counts_filename):
     FIELD+NAME (area) (ET) (scET) (LT) (scLT)
     """
     count_file = open(counts_filename)
-    count_lines = rm_empty(counts_file.read().split('\n')[1:])
+    count_lines = rm_empty(count_file.read().split('\n')[1:])
     count_file.close()
 
     early_counts = []

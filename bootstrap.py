@@ -75,7 +75,7 @@ def MC_bootstrap(counts_filename, no_repetitions, sigDM2=0.012244, count_type='W
         bias_set.append(new_bias)
     return bias_set
 
-def MC_bootstrap_list(counts_list, no_repetitions, sigDM2=0.012244):
+def MC_bootstrap_list(count_list, no_repetitions, sigDM2=0.012244):
     """Conducts a Monte-Carlo Bootstrapping error analysis on a set of counts.
 
     Will randomly select from the set of counts a number of times, calculate the bias for that set.plot
