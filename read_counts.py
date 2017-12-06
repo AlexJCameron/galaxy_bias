@@ -47,6 +47,27 @@ def get_counts_data(count_filename, delim=' '):
 
     return count_data
 
+def read_multi_type(counts_filename):
+    """Assumed structure:
+    FIELD+NAME (area) (ET) (scET) (LT) (scLT)
+    """
+    count_file = open(counts_filename)
+    count_lines = rm_empty(counts_file.read().split('\n')[1:])
+    count_file.close()
+
+    early_counts = []
+    late_counts = []
+
+    for line in count_lines:
+        split_line = line.split(' ')
+        scET = float(split_line[3])
+        scLT = float(split_line[5])
+        early_counts.append(scET)
+        late_counts.append(scLT)
+
+    return early_counts, late_counts
+
+
 def counts_meanvar(count_data, count_type='WhtCount'):
     """Returns the mean and variance of field counts from a pandas DataFrame
 

@@ -16,25 +16,28 @@ if __name__=='__main__':
     sigDM2 = float(sig_str)
     count_file = results_dir + 'count_data.dat'
     bias_filename = results_dir + 'bias.txt'
-    count_types = ['SegCount']
-    label_dict = {'WhtCount':'weight','SegCount':'segmentation'}
 
-    count_data = read_counts.get_counts_data(count_file)
+    early_list, late_list = read_counts.read_multi_type(count_file)
+    data_dict = {
+    'early':early_list,
+    'late':late_list
+    }
+    types = ['early', 'late']
     bias_results = open(bias_filename, 'w')
 
-    for count_type in count_types:
-        log1 = 'For %s:' % count_type
+    for tb in types:
+        log1 = 'For %s type:' % tb
         print log1
         bias_results.write(log1 + '\n')
 
-        mean_N, var_N = read_counts.counts_meanvar(count_data, count_type=count_type)
+        mean_N, var_N = np.mean(data_dict[tb]), np.var(data_dict[tb])
         bias = bootstrap.compute_bias(mean_N, var_N, sigDM2=sigDM2)
 
         log2 = "Bias:  %f" % bias
         print log2
         bias_results.write(log2 + '\n')
 
-        bias_set = bootstrap.MC_bootstrap(count_file, 1000, sigDM2=sigDM2, count_type=count_type)
+        bias_set = bootstrap.MC_bootstrap_list(data_dict[tb], 1000, sigDM2=sigDM2)
 
 
         log3 = '\nBootstrapping bias set:\nMean:  %f    StDev:  %f' % (np.mean(bias_set), np.std(bias_set))
@@ -42,8 +45,8 @@ if __name__=='__main__':
         print '\n\n'
         bias_results.write(log3 + '\n\n\n')
 
-        hist_filename = results_dir + 'bias_error_%s.eps' % count_type
-        pdf_filename = results_dir + 'bias_error_pdf.eps'
+        hist_filename = results_dir + 'bias_error_%s.eps' % tb
+        pdf_filename = results_dir + 'bias_error_pdf_%s.eps' % tb
 
         bootstrap.plot_hist_setbins(bias_set, hist_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='count', x_range=(0.,6.))
         bootstrap.plot_pdf_hist(bias_set, pdf_filename, (0.,6.), 0.2, xlabel='$b$', ylabel='$P(b)$', x_range=(0.,6.))

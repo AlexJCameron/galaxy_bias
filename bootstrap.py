@@ -1,9 +1,14 @@
-import numpy as np
-import read_counts
 import matplotlib
+matplotlib.rcParams.update({'font.size': 14})
+
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':[]})
+rc('text', usetex=True)
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
+import numpy as np
+import read_counts
 
 def pick_new_sample(data_list):
     """From a list of data will pick a new sample of the same length with repetition
@@ -70,11 +75,57 @@ def MC_bootstrap(counts_filename, no_repetitions, sigDM2=0.012244, count_type='W
         bias_set.append(new_bias)
     return bias_set
 
-def plot_hist_setbins(dataset, plot_filename, bin_range, binwidth, xlabel='x', ylabel='y', title='Plot title', legend=False, label='data', x_range=None, y_range=None, line_colour='blue', fill_colour='#fffdc9'):
+def MC_bootstrap_list(counts_list, no_repetitions, sigDM2=0.012244):
+    """Conducts a Monte-Carlo Bootstrapping error analysis on a set of counts.
+
+    Will randomly select from the set of counts a number of times, calculate the bias for that set.plot
+
+    Parameters
+    ----------
+    counts_filename : str
+        Filename of the count_data file
+    no_repetitions : int
+        Number of biases to calculate
+
+    Returns
+    -------
+    bias_set : list
+        List of biases calculated in the analysis
+
+    """
+    bias_set = []
+    for rep in range(no_repetitions):
+        new_counts = pick_new_sample(count_list)
+        mean_N, var_N = get_meanvar(new_counts)
+        if var_N >= mean_N:
+            new_bias = compute_bias(mean_N, var_N, sigDM2=sigDM2)
+        else:
+            new_bias = 0
+        bias_set.append(new_bias)
+    return bias_set
+
+def plot_hist_setbins(dataset, plot_filename, bin_range, binwidth, xlabel='x', ylabel='y', legend=False, label='data', x_range=None, y_range=None, line_colour='green', fill_colour='#fffdc9'):
     bins = np.arange(bin_range[0], bin_range[1], binwidth)
     plt.hist(dataset, bins=bins, histtype='stepfilled', color=fill_colour)
     plt.hist(dataset, bins=bins, histtype='step', color=line_colour, label=label)
-    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if not x_range == None:
+        plt.xlim(x_range)
+    if not y_range == None:
+        plt.xlim(y_range)
+    if legend:
+        plt.legend()
+
+    plt.savefig(plot_filename)
+    plt.cla()
+
+    return None
+
+def plot_pdf_hist(dataset, plot_filename, bin_range, binwidth, xlabel='x', ylabel='y', legend=False, label='data', x_range=None, y_range=None, line_colour='green', fill_colour='#adf0a7'):
+    bins = np.arange(bin_range[0], bin_range[1], binwidth)
+    plt.hist(dataset, bins=bins, normed=True, histtype='stepfilled', color=fill_colour)
+    plt.hist(dataset, bins=bins, normed=True, histtype='step', color=line_colour, label=label)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     if not x_range == None:
